@@ -16,16 +16,7 @@ SeedDMS was deployed on Hostinger Shared Hosting as a centralized document manag
 
 ## 🔍 Why SeedDMS?
 
-SeedDMS was selected after evaluating multiple open-source document management solutions based on:
-
-- Deployment complexity
-- Shared hosting compatibility
-- User interface
-- Feature set
-- Ease of maintenance
-- Community support
-
-SeedDMS was selected because it provides:
+SeedDMS was chosen because it provides:
 
 - Role-based access control (ACL)
 - Document versioning
