@@ -54,7 +54,7 @@ SeedDMS was chosen because it provides:
 - ✅ Configured firewall/security rules to reduce automated bot traffic
 - ✅ Performed version upgrades (6.0.33 → 6.0.39)
 - ✅ Created installation, upgrade, and troubleshooting documentation
-- ✅ Documented rollback and staging upgrade procedures
+- ✅ Documented rollback and upgrade procedures
 
 ---
 
@@ -158,7 +158,7 @@ This project provided hands-on experience with:
 
 - Deploying and maintaining a PHP-based application on shared hosting
 - Handling shared hosting limitations such as broken symlinks and archive extraction issues
-- Managing application upgrades using a staging subfolder before production deployment
+- Learned safe upgrade testing practices using a temporary subfolder before live deployment
 - Performing safe rollback procedures during upgrade testing
 - Configuring Apache rewrite rules and application paths
 - Troubleshooting real deployment issues including HTTP 500 errors, missing dependencies, and caching problems
