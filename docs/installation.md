@@ -9,7 +9,7 @@
 | Requirement | Details |
 |---|---|
 | Hosting | Hostinger Shared Hosting |
-| PHP Version | 8.2 or higher |
+| PHP Version | 8.2 or higher |  
 | Database | MySQL |
 | SSH Access | Required for 2 steps only |
 | hPanel Access | Required |
@@ -58,7 +58,7 @@ Go to **hPanel → File Manager → public_html**
 Connect to your server:
 
 ```bash
-ssh u624219220@yourdomain.com -p 65002
+ssh username@yourdomain.com -p 65002
 ```
 
 > Hostinger uses port **65002**, not the default port 22.
@@ -70,42 +70,77 @@ cd ~/domains/yourdomain.com/public_html
 tar -xvzf seeddms-quickstart-X.X.X.tar.gz
 ```
 
-✅ All symlinks are created automatically during extraction.
+✅ Most symlinks are created automatically during extraction, except the `vendor` symlink which may need to be created manually.
 
 ---
 
-## 🔗 Step 5 — Fix the vendor Symlink
+## 🔗 Step 5 — Create/Fix the vendor Symlink
 
 > 🔵 **SSH Required for this step. Do this BEFORE running the installer!**
 
-After extraction, the vendor symlink points to a wrong location. Fix it:
+After extraction, check whether the `vendor` symlink exists inside the extracted SeedDMS folder.
+
+Navigate to `public_html`:
 
 ```bash
 cd ~/domains/yourdomain.com/public_html
-unlink seeddms-X.X.X/vendor
-ln -s ~/domains/yourdomain.com/public_html/vendor seeddms-X.X.X/vendor
 ```
 
-Verify it is fixed:
+Check the symlink:
 
 ```bash
 ls -la seeddms-X.X.X/ | grep vendor
 ```
 
-You should see:
-```
-vendor -> /home/username/domains/yourdomain.com/public_html/vendor
+If the `vendor` symlink is missing or incorrect, create it manually:
+
+```bash
+ln -s /home/USERNAME/domains/YOURDOMAIN/public_html/vendor seeddms-X.X.X/vendor
 ```
 
-> **Why?** If you skip this step, the installation page will show a fatal HTTP 500 error and installation will fail completely.
+Verify again:
 
----
+```bash
+ls -la seeddms-X.X.X/ | grep vendor
+```
+
+Expected output:
+
+```text
+vendor -> /home/USERNAME/domains/YOURDOMAIN/public_html/vendor
+```
+
+> **Why?** SeedDMS requires the `vendor/` directory for PHP dependencies.
+>
+> If the `vendor` symlink is missing or pointing to the wrong location, the installation page may show HTTP 500 errors and fail to load properly.
+
+--- 
 
 ## ⚙️ Step 6 — Configure settings.xml
 
-Go to **hPanel → File Manager → public_html → conf → settings.xml**
+Go to:
 
-Open the file and update the following values:
+```text
+hPanel → File Manager → public_html → conf → settings.xml
+```
+
+Open the file and verify that `rootDir` is pointing to the correct location:
+
+```xml
+<server
+  rootDir="/home/username/domains/yourdomain.com/public_html/www/"
+  ...
+/>
+```
+
+Replace:
+
+- `username` with your hosting username
+- `yourdomain.com` with your actual domain
+
+> 📌 Once `rootDir` is configured correctly, the installer usually detects and fills the remaining paths automatically during installation.
+
+> 📌 If the remaining paths are not detected automatically, configure them manually like this:
 
 ```xml
 <server
@@ -121,12 +156,9 @@ Open the file and update the following values:
 />
 ```
 
-Replace `username` and `yourdomain.com` with your actual values.
-
-> **Why?** SeedDMS needs to know where its files and data are located on the server.
+> **Why?** SeedDMS uses these paths to locate application files, uploaded documents, cache, search indexes, and backup directories correctly.
 
 ---
-
 ## 🔓 Step 7 — Create ENABLE_INSTALL_TOOL File
 
 Go to **hPanel → File Manager → public_html → conf**
@@ -137,56 +169,77 @@ Go to **hPanel → File Manager → public_html → conf**
 
 > **Why?** SeedDMS requires this file to exist before it allows the installer to run. It is a security measure.
 
----
-
-## 🌐 Step 8 — Set Up .htaccess for URL Routing
-
-Go to **hPanel → File Manager → public_html**
-
-Open or create `.htaccess` and add:
-
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_URI} !^/www/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /www/$1 [L,QSA]
-```
-
-> **Why?** SeedDMS code lives inside the `www/` subfolder. This rule routes all requests to the correct location while keeping URLs clean (no `/www/` visible in browser).
 
 ---
 
-## 🚀 Step 9 — Run the Installer
+## 🚀 Step 8 — Run the Installer
 
 Open your browser and visit:
 
-```
+```text
 https://yourdomain.com/www/install/
 ```
 
 - Click **Start Installation**
-- Fill in your database details (name, username, password)
-- Set admin username and password
+- Fill in your database details:
+  - Database name
+  - Database username
+  - Database password
+- Select/tick the **Create Database Tables** checkbox
+- Continue with the installation steps
 - Click **Save**
 
 ✅ Installation complete!
 
----
+> 📌 The default SeedDMS administrator credentials are:
+>
+> ```text
+> Username: admin
+> Password: admin
+> ```
 
-## 🎨 Step 10 — Custom Branding
+> ⚠️ Login using the default credentials and change the admin password immediately after the first login.
+
+> ⚠️ After installation is completed, delete or rename the `ENABLE_INSTALL_TOOL` file inside:
+>
+> ```text
+> public_html/conf/
+> ```
+>
+> Example:
+>
+> ```text
+> ENABLE_INSTALL_TOOL → ENABLE_INSTALL_TOOL_old
+> ```
+
+---
+## 🎨 Step 9 — Custom Branding
 
 ### Custom Logo
-- Location: `public_html/seeddms-X.X.X/views/bootstrap/images/`
-- Replace or add your logo file in this folder via File Manager
+
+- Location:
+
+```text
+public_html/seeddms-X.X.X/views/bootstrap/images/
+```
+- Upload your custom logo/image files inside the `images/` folder using File Manager
+- To replace an existing logo, replace the original image file with your custom image and keep the same filename as the old image
+
+> 📌 Keeping the same filename helps avoid additional configuration changes.
 
 ### Custom UI Text
-- Location: `public_html/seeddms-X.X.X/languages/en_GB/lang.inc`
-- Open this file and edit any text labels you want to change
+
+- Location:
+
+```text
+public_html/seeddms-X.X.X/languages/en_GB/lang.inc
+```
+
+- Open the `lang.inc` file and edit the text labels you want to customize
 
 ---
 
-## 🔧 Step 11 — Fix Charts (Bootstrap Theme)
+## 🔧 Step 10 — Fix Charts (Bootstrap Theme)
 
 The Bootstrap theme is missing the `tablesort` library. Copy it from the Bootstrap4 theme:
 
@@ -203,15 +256,51 @@ cd ~/domains/yourdomain.com/public_html/seeddms-X.X.X
 cp -r views/bootstrap4/vendors/tablesort views/bootstrap/vendors/
 ```
 
-> **Why?** Without this, the Charts section under Admin Tools will not load and will show JavaScript errors.
+> **Why?** Without this, the Charts section under Admin Tools will not load and will show JavaScript errors or black page insted of chart.
 
 ---
+## 🔐 Step 11 — First Login & Password Change
 
-## 🔐 Step 12 — First Login & Password Change
+- Visit:
 
-- Visit: `https://yourdomain.com`
-- Login with the admin credentials you set during installation
-- Go to **My Account** and change your password immediately
+```text
+https://yourdomain.com
+```
+
+- Login using the default credentials:
+
+```text
+Username: admin
+Password: admin
+```
+
+- Go to **My Account**
+- Change the admin password immediately after login
+
+---
+## 🌐 Step 12 — Set Up .htaccess for Clean URL Routing
+
+Go to:
+
+```text
+hPanel → File Manager → public_html
+```
+
+Open or create the `.htaccess` file and add:
+
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/www/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /www/$1 [L,QSA]
+```
+
+> 📌 This step is recommended after installation and first login verification are completed.
+
+> **Why?** SeedDMS application files are served from the `www/` directory.
+>
+> These rewrite rules automatically route requests to the correct location while keeping the URL clean (without showing `/www/` in the browser).
 
 ---
 
@@ -221,7 +310,7 @@ If you notice unusually high traffic (mostly bots), integrate Cloudflare:
 
 1. Create a free account at [cloudflare.com](https://cloudflare.com)
 2. Add your domain
-3. Replace your Hostinger DNS records with Cloudflare DNS records in hPanel
+3. Update your domain nameservers to the Cloudflare nameservers provided during setup
 4. Set up firewall rules in Cloudflare to block bot traffic
 
 > **Why?** Cloudflare adds a security layer, blocks malicious bots, and improves performance through CDN caching.
@@ -235,7 +324,7 @@ If you notice unusually high traffic (mostly bots), integrate Cloudflare:
 - [ ] Custom logo showing
 - [ ] Custom text labels correct
 - [ ] Charts loading (Admin Tools → Charts)
-- [ ] ENABLE_INSTALL_TOOL file deleted from conf/
+- [ ] ENABLE_INSTALL_TOOL file deleted or renamed from `conf/`
 - [ ] Cloudflare integrated (optional but recommended)
 
 ---
