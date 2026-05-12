@@ -32,7 +32,7 @@ Download the file named: `seeddms-quickstart-X.X.X.tar.gz` to your computer.
 
 Go to **hPanel → Databases → MySQL Databases**
 
-- Create a new database (e.g. `u624219220_docs`)
+- Create a new database 
 - Note down the database name, username, and password
 - You do not need to create any tables — the installer will handle that
 
