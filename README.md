@@ -2,6 +2,7 @@
 
 > A practical deployment, upgrade, and maintenance guide for hosting **SeedDMS** (Open Source Document Management System) on **Hostinger Shared Hosting** with **Cloudflare** integration.
 
+> 📸 All screenshots in this repository are captured from a local Ubuntu-based testing environment and are used for demonstration purposes.
 ---
 
 ## 🧩 Project Overview
