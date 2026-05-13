@@ -4,6 +4,14 @@
 
 > 📸 All screenshots in this repository are captured from a local Ubuntu-based testing environment and are used for demonstration purposes.
 ---
+## 📸 Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/login-page.png" width="30%">
+  <img src="docs/screenshots/dashboard.png" width="30%">
+  <img src="docs/screenshots/admin-tools.png" width="30%">
+</p>
+<hr>
 
 ## 🧩 Project Overview
 
